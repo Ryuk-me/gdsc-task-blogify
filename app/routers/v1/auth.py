@@ -8,6 +8,7 @@ from app.schemas import token_schema
 from app.models import user as user_model
 from datetime import timedelta
 import re
+from fastapi_limiter.depends import RateLimiter
 
 router = APIRouter(
     prefix=settings.BASE_API_V1 + '/auth',
@@ -16,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.post('/user', response_model=token_schema.BaseToken)
+@router.post('/user', response_model=token_schema.BaseToken, dependencies=[Depends(RateLimiter(times=1, seconds=5))])
 async def user_login(user_credentials: OAuth2PasswordRequestForm = Depends()):
     user_credentials.username = user_credentials.username.lower()
     isNone = re.match(

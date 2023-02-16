@@ -8,6 +8,7 @@ from app.schemas import blog as __blog_schema
 from bson import ObjectId, errors
 from typing import List, Optional
 from app.auth import get_current_user
+from fastapi_limiter.depends import RateLimiter
 
 
 router = __APIRouter(
@@ -17,7 +18,7 @@ router = __APIRouter(
 )
 
 
-@router.put("/", status_code=__status.HTTP_202_ACCEPTED, response_model=__blog_schema.Blogout)
+@router.put("/", status_code=__status.HTTP_202_ACCEPTED, response_model=__blog_schema.Blogout, dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def __update_blog(id: str, blog: __blog_model.UpdateBlog, current_user: user_model.User = Depends(get_current_user)):
     try:
         # filter = {
@@ -38,7 +39,7 @@ async def __update_blog(id: str, blog: __blog_model.UpdateBlog, current_user: us
     return rt_blog
 
 
-@router.delete("/", status_code=__status.HTTP_202_ACCEPTED)
+@router.delete("/", status_code=__status.HTTP_202_ACCEPTED, dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def __delete_blog(id: str, current_user: user_model.User = Depends(get_current_user)):
     try:
         filter = {"_id": ObjectId(id), "author": current_user["username"]}
@@ -53,7 +54,7 @@ async def __delete_blog(id: str, current_user: user_model.User = Depends(get_cur
     return {"detail": "blog deleted"}
 
 
-@router.post("/", status_code=__status.HTTP_201_CREATED, response_model=__blog_schema.Blogout)
+@router.post("/", status_code=__status.HTTP_201_CREATED, response_model=__blog_schema.Blogout, dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def __create_blog(blog: __blog_model.BlogCreate, current_user: user_model.User = Depends(get_current_user)):
     if __USER_COL.find_one({"username": current_user["username"]}):
         blog.author = current_user["username"]
@@ -64,7 +65,7 @@ async def __create_blog(blog: __blog_model.BlogCreate, current_user: user_model.
     raise __error_status.USER_NOT_FOUND
 
 
-@router.get("/all", status_code=__status.HTTP_200_OK, response_model=List[__blog_schema.Blogout], description="This will show all blogs by limit")
+@router.get("/all", status_code=__status.HTTP_200_OK, response_model=List[__blog_schema.Blogout], description="This will show all blogs by limit", dependencies=[Depends(RateLimiter(times=1, seconds=5))])
 async def __get_all_blogs(limit: Optional[int] = None, current_user: user_model.User = Depends(get_current_user)):
     if limit:
         all_blogs = __BLOG_COL.find({}).limit(limit)

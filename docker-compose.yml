@@ -5,6 +5,9 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+    
+  redis:
+    image: "redis:alpine"
   blogify-api:
     container_name: Blogify-API
     restart: always
@@ -15,3 +18,5 @@ services:
       - 8009:8009
     depends_on:
       - mongodb
+      - redis
+  

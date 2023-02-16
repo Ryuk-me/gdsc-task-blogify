@@ -24,7 +24,7 @@ async def __get_user_by_username(username: str, current_user: __user_model.User 
         raise __error_status.USER_NOT_FOUND
 
 
-@router.post('/', status_code=__status.HTTP_201_CREATED)
+@router.post('/', status_code=__status.HTTP_201_CREATED,)
 async def __create_user(user: __user_model.UserCreate):
     if __USER_COL.find_one({"username": user.username}):
         raise __error_status.USER_ALREADY_EXIST

@@ -5,10 +5,12 @@
 
 ```sh
 
+# To run with Docker
+
 clone this repository
 
 move to root directory of the project
-install docker
+
 and use commands 
 
 $ docker compose build
@@ -24,7 +26,7 @@ install all the dependencies using command
 
 $ pip install -r .\app\requirements.txt
 
-# also install mongo db 
+# also install mongo db and redis (wsl will be required on windows to install redis)
 
 $ uvicorn app.main:app --host 0.0.0.0 --port 8009
 
@@ -45,7 +47,20 @@ $ uvicorn app.main:app --host 0.0.0.0 --port 8009
 1. - [X] Add support for uploading images to blog posts.
 2. - [X] Implement pagination for the list of all blog posts. The API should return a specified number of posts per page. Added `limit` to achieve pagination by limiting number of blogs per page
 2. - [X] Add support for searching blog posts by title or content.
-2. - [ ] Implement rate limiting for the authentication and blog post routes to prevent abuse. `[NOT IMPLEMENTED]`
+3. - [X] Implement rate limiting for the authentication and blog post routes to prevent abuse. `[IMPLEMENTED] {16-02-2023}`
+
+```sh
+
+Routes with rate limit
+
+/api/v1/auth/user  time=1 seconds=5
+/api/v1/blog/       times=2 seconds=5
+/api/v1/blog/all       time=1 seconds=5
+
+To test rate limit
+
+/limit    time=1 seconds=5
+```
 
 
 
