@@ -15,6 +15,7 @@ class __Settings(__BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     BASE_URL: str
     PORT: int
+    REDIS_HOST: str
 
     class Config:
         env_file = ".env"
@@ -24,3 +25,4 @@ settings = __Settings()
 
 if ENV == 'prod':
     settings.DATABASE_URI = "mongodb://mongodb:27017"
+    settings.REDIS_HOST = 'redis'

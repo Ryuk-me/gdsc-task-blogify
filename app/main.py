@@ -5,7 +5,7 @@ from app.routers.v1 import user, blog, auth
 import app.database
 import redis.asyncio as redis
 from fastapi_limiter import FastAPILimiter
-
+from app.Config import settings
 
 app = FastAPI(
     title="Blogify-API",
@@ -26,7 +26,7 @@ origins = [
 @app.on_event("startup")
 async def startup():
     pool = redis.ConnectionPool(
-        host='redis',
+        host=settings.REDIS_HOST,
         port=6379,
         decode_responses=True,
         encoding="utf-8",
